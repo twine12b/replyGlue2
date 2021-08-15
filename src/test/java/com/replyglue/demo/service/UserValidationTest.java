@@ -43,6 +43,8 @@ public class UserValidationTest {
         assertFalse(userValidationService.passwordIsValid("abcde1gpkjy"));
         assertTrue(userValidationService.passwordIsValid("Abcde1gpkjy"));
         assertFalse(userValidationService.passwordIsValid("1235pkjy"));
+        assertFalse(userValidationService.passwordIsValid("1235pk jy"));
+        assertFalse(userValidationService.passwordIsValid("1235pk@-%$£jy"));
     }
 
     @Test

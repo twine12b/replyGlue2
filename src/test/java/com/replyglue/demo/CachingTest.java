@@ -38,7 +38,8 @@ public class CachingTest {
                 "r1Chard",
                 "passWord123",
                 "rich@me.com",
-                new GregorianCalendar(1984, 5, 9));
+                "1984, 5, 9",
+                null);
 
     }
 

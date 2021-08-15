@@ -9,11 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URI;
-import java.util.GregorianCalendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -33,13 +31,12 @@ public class IntegrationTest {
     public void setUp() throws Exception {
         testUser1 = new User(
                 "r1Chard", "passWord123",
-                "rich@me.com", new GregorianCalendar(1984, 5, 9)
-//                "rich@me.com", new GregorianCalendar(1984, 5, 9)
+                "rich@me.com", "1984, 5, 9"
         );
 
         testUser2 = new User(
                 "simonE1B", "seCret11",
-                "simon@hotmail.co.uk", new GregorianCalendar(1996, 12, 12)
+                "simon@hotmail.co.uk", "1996, 12, 12", null
         );
     }
 
@@ -61,9 +58,20 @@ public class IntegrationTest {
     @Test
     public void testFailingRequestBody_shouldReturnStatus_400() throws Exception {
         URI uri = new URI("/users/");
+        testUser1.setUsername("should NOT Have spaces 235");
         ResponseEntity<User> result = restTemplate.postForEntity(uri, testUser1, User.class);
 
-        assertEquals(201, result.getStatusCode());
+        assertEquals("400 BAD_REQUEST", result.getStatusCode().toString());
+    }
+
+    @Test
+    public void test_userAlreadyRegistered_shouldReturnStatus_409() throws Exception {
+        URI uri = new URI("/users/");
+        testUser1.setUsername("r1Chard");
+        ResponseEntity<User> result = restTemplate.postForEntity(uri, testUser1, User.class);
+
+        assertEquals("409 CONFLICT", result.getStatusCode().toString());
+        // TODO - fix above code
     }
 
 }

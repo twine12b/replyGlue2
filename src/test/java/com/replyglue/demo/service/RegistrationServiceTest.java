@@ -6,20 +6,25 @@ import com.replyglue.demo.util.UserNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.GregorianCalendar;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+@DataJpaTest
 public class RegistrationServiceTest {
 
     @Mock
     private RegistrationRepository registrationRepository;
 
+    @InjectMocks
     private RegistrationService registrationService;
     private User testUser;
 
@@ -30,7 +35,8 @@ public class RegistrationServiceTest {
                 "r1Chard",
                 "passWord123",
                 "rich@me.com",
-                new GregorianCalendar(1984, 5, 9));
+                "2008, 5, 9",
+                null);
     }
 
     @Test
@@ -46,13 +52,38 @@ public class RegistrationServiceTest {
 
     @Test(expected = UserNotFoundException.class)
     public void findUsersByUsername_whenUserNotFound() throws Exception {
-        given(registrationRepository.findUsersByUsername("r1Chard")).willReturn(null);
+        given(registrationRepository.findUsersByUsername(anyString())).willThrow(new UserNotFoundException());
 
         registrationService.findUsersByUsername("r1Chard");
     }
 
     @Test
-    public void test_isUserValid_shouldReturn_StatusCode() throws Exception {
-        given(registrationService.isUserValid(testUser));
+    public void test_isUserValid_shouldReturn_boolean() throws Exception {
+        given(registrationRepository.findUsersByUsername(anyString())).willReturn(testUser);
+        User user = registrationService.findUsersByUsername("tomHanks");
+
+        boolean isValid = registrationService.isRegisteredUser("r1Chard");
+
+        assertEquals(true, isValid);
+    }
+
+    //TODO - sort dob and deserialization
+//    @Test
+//    public void test_userYoungerThan18_shouldReturn_statusCode403() {
+//        boolean isOfAge = registrationService.isAdult(testUser);
+//    }
+
+    @Test
+    public void test_isAlreadyRegistered_returns_boolean(){
+        given(registrationService.findUsersByUsername(anyString())).willReturn(testUser);
+        assertTrue(registrationService.isRegisteredUser("r1Chard"));
+    }
+
+    @Test
+    public void testSaveUser_whenValidateSuccess()throws Exception {
+        User newUser = new User("newUser1","newUser1Password","newuser@outlook.com", "2001-12-17");
+        boolean isRegistered = registrationService.registerUser(newUser);
+
+        assertEquals(true, isRegistered);
     }
 }
