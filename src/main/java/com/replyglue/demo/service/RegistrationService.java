@@ -41,12 +41,10 @@ public class RegistrationService extends UserValidationService {
     }
 
     public List<User> filterUsersByCreditCard(String yesNoAll) {
-        if(yesNoAll.equalsIgnoreCase("Optional[yes]")) {
-            return (List<User>) registrationRepository.findUsersWithCreditCard();
-        } else if(yesNoAll.equalsIgnoreCase("Optional[no]")) {
-            return (List<User>) registrationRepository.findUsersWithOutCreditCard();
-        } else {
-            return (List<User>) registrationRepository.findAll();
+        switch(yesNoAll) {
+            case "Optional[yes]" : return (List<User>) registrationRepository.findUsersWithCreditCard();
+            case "Optional[no]"  : return (List<User>) registrationRepository.findUsersWithOutCreditCard();
+            default: return (List<User>) registrationRepository.findAll();
         }
     }
 
