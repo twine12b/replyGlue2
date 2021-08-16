@@ -24,9 +24,8 @@ public class PaymentService {
     public boolean makePayment(Payment payment) {
         return registrationService.creditcardIsValid(payment.getPayment_card()) &&
                     isValidAmount(String.valueOf(payment.getAmount()))  ?
-                         checkCardExists(String.valueOf(payment.getPayment_card()))  ?
-                                 savePayment(payment).isPresent() ? true : false  // save file
-                         : false
+                         checkCardExists(String.valueOf(payment.getPayment_card()))  &&
+                                 savePayment(payment).isPresent()
                 : false;
     }
 
@@ -36,7 +35,7 @@ public class PaymentService {
     }
 
     public boolean checkCardExists(String cardNumber) {
-        return registrationService.findUserByCreditCard(cardNumber).isPresent() ? true : false;
+        return registrationService.findUserByCreditCard(cardNumber).isPresent();
     }
 
     public Optional<Payment> savePayment(Payment payment){
