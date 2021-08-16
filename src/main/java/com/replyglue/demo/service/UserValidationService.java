@@ -43,9 +43,7 @@ public class UserValidationService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(stringToValidate);
 
-        return stringToValidate.length() > 0
-                ? matcher.matches()  ? true : false
-                : false;
+        return stringToValidate.length() > 0 && matcher.matches();
     }
 
 }

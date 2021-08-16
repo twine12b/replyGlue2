@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RegistrationRepository extends JpaRepository<User, Long> {
@@ -21,5 +22,5 @@ public interface RegistrationRepository extends JpaRepository<User, Long> {
     List<User> findUsersWithOutCreditCard();
 
     @Query(value = "SELECT * FROM user u WHERE u.card= ?1", nativeQuery = true)
-    User findUserByCreditCard(String cardNumber);
+    Optional<User> findUserByCreditCard(String cardNumber);
 }

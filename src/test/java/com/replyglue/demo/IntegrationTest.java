@@ -51,8 +51,7 @@ public class IntegrationTest {
         assertThat(response.getBody().getUsername()).isEqualTo("r1Chard");
         assertThat(response.getBody().getPassword()).isEqualTo("passWord123");
         assertThat(response.getBody().getEmail()).isEqualTo("rich@me.com");
-        //TODO - fix test for date
-//        assertThat(response.getBody().getDob()).isEqualTo(new GregorianCalendar(1984, 4, 9));
+
     }
 
     @Test
@@ -71,7 +70,6 @@ public class IntegrationTest {
         ResponseEntity<User> result = restTemplate.postForEntity(uri, testUser1, User.class);
 
         assertEquals("409 CONFLICT", result.getStatusCode().toString());
-        // TODO - fix above code
     }
 
 }

@@ -1,44 +1,49 @@
 package com.replyglue.demo.service;
 
 import com.replyglue.demo.domain.Payment;
-import com.replyglue.demo.domain.User;
 import com.replyglue.demo.repository.PaymentRepository;
-import com.replyglue.demo.repository.RegistrationRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.sound.midi.Soundbank;
-import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PaymentService extends RegistrationService {
+public class PaymentService {
 
-    private RegistrationRepository registrationRepository;
+    @Autowired
+    private RegistrationService registrationService;
 
-    public PaymentService(RegistrationRepository registrationRepository) {
-        super(registrationRepository);
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    public PaymentService(RegistrationService registrationService, PaymentRepository paymentRepository) {
+        this.registrationService = registrationService;
+        this.paymentRepository = paymentRepository;
     }
 
     public boolean makePayment(Payment payment) {
-        return creditcardIsValid(payment.getPayment_card()) &&
-                    isValidAmount(String.valueOf(payment.getAmount()))
-                         ? true  // check card exists
+        return registrationService.creditcardIsValid(payment.getPayment_card()) &&
+                    isValidAmount(String.valueOf(payment.getAmount()))  ?
+                         checkCardExists(String.valueOf(payment.getPayment_card()))  ?
+                                 savePayment(payment).isPresent() ? true : false  // save file
+                         : false
                 : false;
     }
 
     public boolean isValidAmount(String amount) {
         String regex = "(.*\\d){3}";
-        return doValidation(regex, amount);
+        return registrationService.doValidation(regex, amount);
     }
 
     public boolean checkCardExists(String cardNumber) {
-        User user =  findUsersByUsername("simonE1B");
-        System.out.println(user);
-
-//        return user.getUsername().equals(null) ? false : true;
-        return false;
+        return registrationService.findUserByCreditCard(cardNumber).isPresent() ? true : false;
     }
+
+    public Optional<Payment> savePayment(Payment payment){
+        long paymentCount = paymentRepository.count();
+        paymentRepository.saveAndFlush(payment);
+        return paymentRepository.findById(paymentCount +1);
+    }
+
 
 }
