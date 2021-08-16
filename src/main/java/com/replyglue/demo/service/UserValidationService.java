@@ -37,7 +37,7 @@ public class UserValidationService {
         return doValidation(regex, dob);
     }
 
-    private boolean doValidation(String regex, String stringToValidate) {
+    protected boolean doValidation(String regex, String stringToValidate) {
         if(stringToValidate == null) return false;
 
         Pattern pattern = Pattern.compile(regex);

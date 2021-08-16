@@ -15,7 +15,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @DataJpaTest
@@ -64,7 +63,7 @@ public class RegistrationServiceTest {
 
         boolean isValid = registrationService.isRegisteredUser("r1Chard");
 
-        assertEquals(true, isValid);
+        assertTrue(isValid);
     }
 
     //TODO - sort dob and deserialization
@@ -84,6 +83,6 @@ public class RegistrationServiceTest {
         User newUser = new User("newUser1","newUser1Password","newuser@outlook.com", "2001-12-17");
         boolean isRegistered = registrationService.registerUser(newUser);
 
-        assertEquals(true, isRegistered);
+        assertTrue(isRegistered);
     }
 }

@@ -17,20 +17,21 @@ public class RegistrationService extends UserValidationService {
 
     @Cacheable("findUsersByUsername")
     public User findUsersByUsername(String username) {
-        User user = registrationRepository.findUsersByUsername(username);
-            return user;
+        return registrationRepository.findUsersByUsername(username);
         }
 
     @Cacheable("isUserValid")
     public boolean isUserValid(User user) {
-        boolean isValid = true;
+        boolean isValid;
+
+        //TODO - refactor using combinator pattern
 
         isValid = usernameIsValid(user.getUsername());
-        isValid = isValid == true ? passwordIsValid(user.getPassword()) : false;
-        isValid = isValid == true ? emailIsValid(user.getEmail()) : false;
+        isValid = isValid ? passwordIsValid(user.getPassword()) : false;
+        isValid = isValid ? emailIsValid(user.getEmail()) : false;
 
         if(user.getCard() !=null){
-            isValid = isValid == true ? creditcardIsValid(user.getCard()) : false;
+            isValid = isValid  ? creditcardIsValid(user.getCard()) : false;
         }
 
         return isValid;
@@ -42,9 +43,9 @@ public class RegistrationService extends UserValidationService {
 
     public List<User> filterUsersByCreditCard(String yesNoAll) {
         switch(yesNoAll) {
-            case "Optional[yes]" : return (List<User>) registrationRepository.findUsersWithCreditCard();
-            case "Optional[no]"  : return (List<User>) registrationRepository.findUsersWithOutCreditCard();
-            default: return (List<User>) registrationRepository.findAll();
+            case "Optional[yes]" : return registrationRepository.findUsersWithCreditCard();
+            case "Optional[no]"  : return registrationRepository.findUsersWithOutCreditCard();
+            default: return registrationRepository.findAll();
         }
     }
 
@@ -52,12 +53,12 @@ public class RegistrationService extends UserValidationService {
         boolean isChecked = false;
 
         if(isUserValid(newUser)
-                && isRegisteredUser(newUser.getUsername()) == false)
+                && !isRegisteredUser(newUser.getUsername()) )
         {
-            registrationRepository.saveAndFlush(newUser);
+            registrationRepository.save(newUser);
             isChecked = true;
         }
-        // TODO - check age - refactor code
+        // TODO - check age - refactor code - use combinator pattern
 
         return isChecked;
     }
