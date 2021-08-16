@@ -32,9 +32,9 @@ public class PaymentServiceTest {
     private User testUser;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 //        paymentService = new PaymentService(registrationService, paymentRepository);
-        paymentService = new PaymentService(registrationService, paymentRepository);
+        paymentService = new PaymentService(registrationRepository, paymentRepository);
         testUser = new User(
                 "kidAccount",
                 "k1dPwd456",
@@ -44,7 +44,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void testPaymentAmount_returnsBoolean() throws Exception{
+    public void testPaymentAmount_returnsBoolean() {
         //Given
         boolean validAmount = paymentService.isValidAmount("25.80");
         assertTrue(validAmount);
@@ -63,7 +63,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void testCheckCardIsRegistered_returnsBoolean() throws Exception{
+    public void testCheckCardIsRegistered_returnsBoolean() {
 //        given(paymentService.checkCardExists(anyString())).willReturn(true);
         boolean cardExists = paymentService.checkCardExists("1111222233334444");
         assertFalse(cardExists);
@@ -72,8 +72,8 @@ public class PaymentServiceTest {
         assertFalse( cardExists);
     }
 
-//    @Test
-    public void testMakeSuccessFullPayment_shouldReturnBoolean() throws Exception {
+    @Test
+    public void testMakeSuccessFullPayment_shouldReturnBoolean() {
         //Given
         Payment payment = new Payment(1234123412341234L, 28.00d);
         boolean successfulPayment = paymentService.makePayment(payment);

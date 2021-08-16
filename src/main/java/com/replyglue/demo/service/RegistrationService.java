@@ -15,11 +15,9 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-@Primary
 public class RegistrationService extends UserValidationService {
 
     @Autowired
-//    @Qualifier("registrationService")
     private final RegistrationRepository registrationRepository;
 
     @Cacheable("findUsersByUsername123")

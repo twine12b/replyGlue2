@@ -3,28 +3,30 @@ package com.replyglue.demo.service;
 import com.replyglue.demo.domain.Payment;
 import com.replyglue.demo.domain.User;
 import com.replyglue.demo.repository.PaymentRepository;
+import com.replyglue.demo.repository.RegistrationRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
-public class PaymentService {
+@Service("paymentService")
+public class PaymentService extends RegistrationService {
 
-    @Autowired
-    private RegistrationService registrationService;
 
     @Autowired
     private PaymentRepository paymentRepository;
 
-    public PaymentService(RegistrationService registrationService, PaymentRepository paymentRepository) {
-        this.registrationService = registrationService;
+    public PaymentService(RegistrationRepository registrationRepository, PaymentRepository paymentRepository) {
+        super(registrationRepository);
         this.paymentRepository = paymentRepository;
     }
 
+
     public boolean makePayment(Payment payment) {
-        if(registrationService.creditcardIsValid(payment.getPayment_card()) &&
+        if(creditcardIsValid(payment.getPayment_card()) &&
                 isValidAmount(String.valueOf(payment.getAmount())))
         {
             if(checkCardExists(String.valueOf(payment.getPayment_card()))){
@@ -46,18 +48,19 @@ public class PaymentService {
 
     public boolean isValidAmount(String amount) {
         String regex = "(.*\\d){3}";
-        return registrationService.doValidation(regex, amount);
+        return doValidation(regex, amount);
     }
 
     public boolean checkCardExists(String cardNumber) {
-        return registrationService.findUserByCreditCard(cardNumber).isPresent();
+        return findUserByCreditCard(cardNumber).isPresent();
     }
 
+    @Transactional
     public Optional<Payment> savePayment(Payment payment){
         long paymentCount = paymentRepository.count();
         paymentRepository.saveAndFlush(payment);
         return paymentRepository.findById(paymentCount +1);
+        // TODO - refactor
     }
-
 
 }
